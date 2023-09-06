@@ -935,6 +935,7 @@ ev_job_fonts_run (EvJob *job)
 {
 	EvJobFonts      *job_fonts = EV_JOB_FONTS (job);
 	EvDocumentFonts *fonts = EV_DOCUMENT_FONTS (job->document);
+	gboolean         scan_completed;
 
 	ev_debug_message (DEBUG_JOBS, NULL);
 
@@ -951,17 +952,17 @@ ev_job_fonts_run (EvJob *job)
 		ev_profiler_start (EV_PROFILE_JOBS, "%s (%p)", EV_GET_TYPE_NAME (job), job);
 #endif
 
-	job_fonts->scan_completed = !ev_document_fonts_scan (fonts, 20);
+	scan_completed = !ev_document_fonts_scan (fonts, 20);
 	g_signal_emit (job_fonts, job_fonts_signals[FONTS_UPDATED], 0,
 		       ev_document_fonts_get_progress (fonts));
 
 	ev_document_fc_mutex_unlock ();
 	ev_document_doc_mutex_unlock ();
 
-	if (job_fonts->scan_completed)
+	if (scan_completed)
 		ev_job_succeeded (job);
 
-	return !job_fonts->scan_completed;
+	return !scan_completed;
 }
 
 static void
