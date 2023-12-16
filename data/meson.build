@@ -70,12 +70,23 @@ foreach man_page: man_pages
   )
 endforeach
 
-# Metainfo file
-metainfo = ev_namespace + '.metainfo.xml'
-i18n.merge_file(
-  input: metainfo + '.in',
-  output: metainfo,
+# Appdata file
+appdata_config = configuration_data()
+appdata_config.set('app_id', ev_app_id)
+appdata_file_in = configure_file(
+          input: 'org.gnome.Evince.appdata.xml.in.in',
+         output: 'org.gnome.Evince.appdata.xml.in',
+  configuration: appdata_config,
+)
+appdata_file = i18n.merge_file(
+  input: appdata_file_in,
+  output: '@0@.appdata.xml'.format(ev_app_id),
   po_dir: po_dir,
   install: true,
   install_dir: ev_appstreamdir,
 )
+
+appstream_util = find_program('appstream-util', required: false)
+if appstream_util.found()
+  validate_args = ['validate-relax', appdata_file]
+endif
