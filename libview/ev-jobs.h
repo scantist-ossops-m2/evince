@@ -367,11 +367,7 @@ struct _EvJobFonts
 
 struct _EvJobFontsClass
 {
-        EvJobClass parent_class;
-
-	/* Signals */
-	void (* updated)  (EvJobFonts *job,
-			   gdouble     progress);
+	EvJobClass parent_class;
 };
 
 struct _EvJobLoad
